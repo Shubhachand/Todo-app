@@ -13,24 +13,30 @@ export const createTodo = async(req,res)=>{
         });
         // console.log();
         await todo.save();
-        return res.status(201).json({msg: "Todo created successfully"});
+        return res.status(201).json({ success: true, msg: "Todo created successfully"});
     }catch(error){
         console.error(`Error: ${error.message}`);
         return res.status(500).json({msg: "Internal Server Error"});
     }
 }
 
-export const getAllTodos = async(req,res)=>{
-    try{
-        const todos = await Todo.find();
-        return res.status(200).json({todos});
+export const getAllTodos = async (req, res) => {
+    try {
+        const todos = await Todo.find({}, "_id title description userId");
 
-    }catch(error){
+        if (!todos || todos.length === 0) {
+            return res.status(404).json({ msg: "No todos found" });
+        }
+
+        console.log("Fetched Todos:", todos); // Debugging
+        return res.status(200).json({ todos });
+
+    } catch (error) {
         console.error(`Error: ${error.message}`);
-        return res.status(500).json({msg: "Internal Server Error"});
+        return res.status(500).json({ msg: "Internal Server Error" });
     }
+};
 
-}
 
 export const updateTodo = async(req,res)=>{
     try{
